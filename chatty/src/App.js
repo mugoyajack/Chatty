@@ -18,11 +18,11 @@ firebase.initializeApp({
     messagingSenderId: "959746801913",
     appId: "1:959746801913:web:ff66714dd2d5ee8cabe228",
     measurementId: "G-0G5MBHQ978"
-})
+});
 
 const auth = firebase.auth();
 const firestore = firebase.firestore();
-const analytics = firebase.analytics();
+//const analytics = firebase.analytics();
 
 
 function App() {
@@ -32,7 +32,7 @@ function App() {
   return (
     <div className="App">
       <header>
-        <h1>⚛️🔥💬</h1>
+        <h1>⚛️ Simple Chat WebApp</h1>
         <SignOut />
       </header>
 
@@ -54,7 +54,7 @@ function SignIn() {
   return (
     <>
       <button className="sign-in" onClick={signInWithGoogle}>Sign in with Google</button>
-      <p>Do not violate the community guidelines or you will be banned for life!</p>
+      <p>Simple chatting WebApp!</p>
     </>
   )
 
@@ -120,7 +120,7 @@ function ChatMessage(props) {
 
   return (<>
     <div className={`message ${messageClass}`}>
-      <img src={photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'} />
+      <img src={photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'} alt = "" />
       <p>{text}</p>
     </div>
   </>)

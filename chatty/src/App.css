@@ -3,20 +3,23 @@ body {
     width: 100vw;
     margin: 0;
     padding: 0;
-    position: absolute;
+    position: relative;
+    overflow: hidden;
     background-color: #2d0303;
-  }
-  
-  .App {
-    
+}
+
+.App {
     text-align: center;
     margin: 0 auto;
     overflow-y: auto;
-  }
-  
-  .App header {
+}
+:root {
+    --app-header-height: 10vh;
+    --send-message-input-height: 10vh;
+}
+.App header {
     background-color: #5d14c3;
-    height: 10vh;
+    height: var(--app-header-height);
     min-height: 50px;
     color: white;
     position: fixed;
@@ -28,99 +31,114 @@ body {
     z-index: 99;
     padding: 10px;
     box-sizing: border-box;
-  }
-  
-  .App section {
+}
+
+.App section {
     display: flex;
     flex-direction: column;
     justify-content: center;
     min-height: 100vh;
     background-color: rgba(6, 4, 15, 0.785);
     position: absolute;
-    left: 8%; /* added */
-    right: 0; /* added */
-  }
-  .left-panel {
+    left: 8%;
+    /* added */
+    right: 0;
+    /* added */
+}
+
+.left-panel {
     display: flex;
     flex-direction: column;
     justify-content: left;
-    min-height: 100vh;
+    position: absolute;
+    height: calc(100vh - var(--app-header-height));
+    top: var(--app-header-height);
+    overflow-y: auto;
     width: 22%;
     background-color: #011111;
-    padding: 10px;
-    position: absolute;
+    padding: 32px 16px;
     float: left;
-  }
-  
-  main {
-    padding: 10px;
-    height: 100vh;
-    margin: 10vh 0 10vh;
-    overflow-y: scroll;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .App section::-webkit-scrollbar {
+}
+
+.App section::-webkit-scrollbar {
     width: 10px;
-  }
-  
-  .App section::-webkit-scrollbar-track {
+}
+
+.App section::-webkit-scrollbar-track {
     background: #f1f1f1;
-  }
-  
-  .App section::-webkit-scrollbar-thumb {
+}
+
+.App section::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 5px;
-  }
-  
-  
-  form {
-    height: 10vh;
+}
+
+
+.send-message-form {
+    height: var(--send-message-input-height);
     position: fixed;
     bottom: 0;
     background-color: rgb(10, 222, 31);
     width: 70%;
     display: flex;
     font-size: 1.5rem;
-  }
-  
-  form button {
+}
+
+.send-message-form button {
     width: 20%;
     background-color: rgb(56, 56, 143);
-  }
-  
+}
 
-  
-  .left-panel::-webkit-scrollbar {
+/* .left-panel::-webkit-scrollbar {
     width: 10px;
-  }
-  
-  .left-panel::-webkit-scrollbar-track {
+}
+
+.left-panel::-webkit-scrollbar-track {
     background: #e90606;
-  }
-  
-  .left-panel::-webkit-scrollbar-thumb {
+}
+
+.left-panel::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 5px;
-  }
-  
-  section {
+} */
+
+section {
     margin-left: 220px;
     padding: 10px;
     overflow-y: auto;
-  }
-  
-  main {
-    padding: 10px;
-    height: 80vh;
-    margin: 10vh 0 10vh;
-    overflow-y: scroll;
+}
+
+.chat-messages-container {
+    --p: 16px;
+    --diff: calc(var(--app-header-height) + var(--send-message-input-height));
+    height: calc(100vh - var(--diff) - var(--p) - var(--p));
+    padding-left: var(--p);
+    padding-right: var(--p);
+    /* padding-top: var(--app-header-height); */
+    /* padding-bottom: var(--send-message-input-height); */
+    margin: 0;
+    overflow-y: auto;
+    scroll-behavior: smooth;
     display: flex;
     flex-direction: column;
-  }
-  
-  input {
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #F1F1F1;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #0b93f6;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #025189;
+}
+
+input {
     line-height: 1.5;
     width: 100%;
     font-size: 1.5rem;
@@ -129,10 +147,11 @@ body {
     outline: none;
     border: none;
     padding: 0 10px;
-  }
-  
-  button {
-    background-color: #34282e; /* Green */
+}
+
+button {
+    background-color: #34282e;
+    /* Green */
     border: none;
     color: white;
     padding: 15px 32px;
@@ -141,27 +160,27 @@ body {
     display: inline-block;
     cursor: pointer;
     font-size: 1.25rem;
-  }
-  
-  button:disabled {
+}
+
+button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-  }
-  
-  .sign-in {
+}
+
+.sign-in {
     color: #282c34;
     background: white;
     max-width: 400px;
     margin: 0 auto;
-  }
-  
-  ul,
-  li {
+}
+
+ul,
+li {
     text-align: left;
     list-style: none;
-  }
-  
-  p {
+}
+
+p {
     max-width: 300px;
     margin-bottom: 12px;
     line-height: 24px;
@@ -170,33 +189,73 @@ body {
     position: relative;
     color: white;
     text-align: center;
-  }
-  
-  .message {
+}
+
+.message {
     display: flex;
     align-items: center;
-  }
-  
-  
-  .sent {
+}
+
+
+.sent {
     flex-direction: row-reverse;
-  }
-  
-  .sent p {
+}
+
+.sent p {
     color: white;
     background: #0b93f6;
     align-self: flex-end;
-  }
-  .received p {
+}
+
+.received p {
     background: #e5e5ea;
     color: black;
-  }
-  
-  img {
+}
+
+img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin: 2px 5px;
-  }
-  
-  
+}
+
+.user {
+    display: flex;
+    align-items: center;
+}
+
+.user img {
+    margin-right: 1rem;
+}
+
+.user p {
+    margin: 0;
+    font-weight: bold;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.avatar-container {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+}
+
+.avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.display-name {
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+    flex: 1;
+}

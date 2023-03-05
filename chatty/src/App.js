@@ -1,51 +1,46 @@
-import React, { useRef, useState, useEffect } from "react";
 import "./App.css";
-
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
-import "firebase/compat/auth";
-import "firebase/compat/analytics";
-
+import { useState, useCallback, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollectionData } from "react-firebase-hooks/firestore";
 
-firebase.initializeApp({
-  apiKey: "AIzaSyCu3P1xnHFJnWn5Sh22MEARDtlq2cs7BGk",
-  authDomain: "chatty-1d579.firebaseapp.com",
-  databaseURL: "https://chatty-1d579-default-rtdb.firebaseio.com",
-  projectId: "chatty-1d579",
-  storageBucket: "chatty-1d579.appspot.com",
-  messagingSenderId: "959746801913",
-  appId: "1:959746801913:web:ff66714dd2d5ee8cabe228",
-  measurementId: "G-0G5MBHQ978",
-});
-
-const auth = firebase.auth();
-const firestore = firebase.firestore();
-//const analytics = firebase.analytics();
-
-function LeftPanel() {
-  const usersRef = firestore.collection("users");
-  const query = usersRef.where("signedIn", "==", true);
-
-  const [users] = useCollectionData(query, { idField: "id" });
-
-  return (
-    <div className="left-panel">
-      <p>Select Chat</p>
-      {users &&
-        users.map((user) => (
-          <div key={user.id}>
-            <img src={user.photoURL} alt={user.displayName} />
-            <p>{user.displayName}</p>
-          </div>
-        ))}
-    </div>
-  );
-}
+import LeftPanel from "./components/LeftPanel";
+import SignOut from "./components/SignOut";
+import SignIn from "./components/SignIn";
+import ChatRoom from "./components/ChatRoom";
+import { auth, db, usersRef } from "./lib/config";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 function App() {
   const [user] = useAuthState(auth);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user === undefined) return
+    setLoading(false)
+  }, [user])
+
+  const handleSelectUser = useCallback((user) => {
+    setSelectedUser(user);
+  }, []);
+
+  const addUser = useCallback(async () => {
+    const userDoc = doc(db, "users", user.uid);
+    const docSnapshot = await getDoc(userDoc);
+    if (!docSnapshot.exists()) {
+        const username = prompt("Please enter a username:");
+        setDoc(userDoc, {
+            uid: user.uid,
+            photoURL: user.photoURL,
+            displayName: username || "Anonymous",
+        });
+    }
+}, [user]);
+
+useEffect(() => {
+	if (auth.currentUser) {
+		addUser();
+	}
+}, [addUser]);
 
   return (
     <div className="App">
@@ -55,136 +50,23 @@ function App() {
       </header>
 
       <main>
-        <LeftPanel />
-        <section>{user ? <ChatRoom /> : <SignIn />}</section>
+        {user ? <LeftPanel onSelectUser={handleSelectUser} /> : null}
+
+        <section>
+          {user && selectedUser ? (
+            <ChatRoom
+              user={user}
+              selectedUser={selectedUser}
+              usersRef={usersRef}
+            />
+          ) : null} 
+
+          {(!loading && !auth.currentUser) ? <SignIn /> : null}
+        </section>
       </main>
     </div>
   );
 }
 
-function SignIn() {
-
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const usersRef = firestore.collection("users");
-    const addUser = async () => {
-      const { uid, photoURL } = auth().currentUser;
-      await usersRef.add({
-        uid,
-        photoURL,
-      });
-    };
-    if (auth.currentUser) {
-      setUser(auth.currentUser);
-      addUser();
-    } else {
-      setUser(null);
-    }
-  }, []);
-
-  const signInWithGoogle = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider);
-  };
-
-  return (
-    <>
-      {user && (
-        <div className="user-info">
-          <img src={user.photoURL} alt="Profile" />
-          <p>{user.displayName}</p>
-        </div>
-      )}
-      {!user && (
-        <button className="sign-in" onClick={signInWithGoogle}>
-          Sign in with Google
-        </button>
-      )}
-      <p>Chatty ⚛️ WebApp</p>
-    </>
-  );
-}
-
-
-
-function SignOut() {
-  return (
-    auth.currentUser && (
-      <button className="sign-out" onClick={() => auth.signOut()}>
-        Sign Out
-      </button>
-    )
-  );
-}
-
-function ChatRoom() {
-  const dummy = useRef();
-  const messagesRef = firestore.collection("messages");
-  const query = messagesRef.orderBy("createdAt").limit(25);
-
-  const [messages] = useCollectionData(query, { idField: "id" });
-
-  const [formValue, setFormValue] = useState("");
-
-  const sendMessage = async (e) => {
-    e.preventDefault();
-
-    const { uid, photoURL } = auth.currentUser;
-
-    await messagesRef.add({
-      text: formValue,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      uid,
-      photoURL,
-    });
-
-    setFormValue("");
-    dummy.current.scrollIntoView({ behavior: "smooth" });
-  };
-
-  return (
-    <>
-      <main>
-        {messages &&
-          messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
-
-        <span ref={dummy}></span>
-      </main>
-
-      <form onSubmit={sendMessage}>
-        <input
-          value={formValue}
-          onChange={(e) => setFormValue(e.target.value)}
-          placeholder="Say something nice"
-        />
-
-        <button type="submit" disabled={!formValue}>
-          🕊️
-        </button>
-      </form>
-    </>
-  );
-}
-
-function ChatMessage(props) {
-  const { text, uid, photoURL } = props.message;
-
-  const messageClass = uid === auth.currentUser.uid ? "sent" : "received";
-
-  return (
-    <>
-      <div className={`message ${messageClass}`}>
-        <img
-          src={
-            photoURL || "https://api.adorable.io/avatars/23/abott@adorable.png"
-          }
-          alt=""
-        />
-        <p>{text}</p>
-      </div>
-    </>
-  );
-}
 
 export default App;

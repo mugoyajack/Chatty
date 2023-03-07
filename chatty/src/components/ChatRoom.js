@@ -49,11 +49,10 @@ async function getMessages(sender, receiver) {
 		receiverSnapshot.docs.forEach((doc) => messages.push(doc.data()));
 	} else {
 		//Fetch group Messages
-
-		const msgQuery = query(groupMessagesRef, orderBy("createdAt"), limit(1000));
+		const msgQuery = query(messagesRef, orderBy("createdAt"), limit(1000));
 		const [groupSnapshot] = await Promise.all([getDocs(msgQuery)]);
 		if (groupSnapshot.empty) return [];
-		return messages;
+        groupSnapshot.docs.forEach((doc) => messages.push(doc.data()));
 	}
 	return messages.sort(msgSort);
 }

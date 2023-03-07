@@ -13,10 +13,12 @@ body {
     margin: 0 auto;
     overflow-y: auto;
 }
+
 :root {
     --app-header-height: 10vh;
     --send-message-input-height: 10vh;
 }
+
 .App header {
     background-color: #5d14c3;
     height: var(--app-header-height);
@@ -59,6 +61,14 @@ body {
     padding: 32px 16px;
     float: left;
 }
+
+
+
+.selected-user {
+    /*text-shadow: 1px 1px #0d011b, 2px 2px #999, 3px 3px #ccc;*/
+    color: #5d14c3;
+}
+
 
 .App section::-webkit-scrollbar {
     width: 10px;
@@ -126,14 +136,17 @@ section {
 ::-webkit-scrollbar {
     width: 10px;
 }
+
 ::-webkit-scrollbar-track {
     background: #F1F1F1;
     border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb {
     background: #0b93f6;
     border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: #025189;
 }
@@ -256,6 +269,6 @@ img {
 .display-name {
     font-weight: bold;
     margin: 0;
-    text-align: center;
+    text-align: left;
     flex: 1;
 }

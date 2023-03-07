@@ -23,9 +23,8 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 const messagesRef = collection(db, "messages");
-const groupMessagesRef = collection(db, "messages");
 const usersRef = collection(db, "users");
 const groupId = "P5P34bFraiT4i3qorOheAUSp31j1";
 
-export { db, auth, messagesRef, groupMessagesRef, usersRef, groupId };
+export { db, auth, messagesRef, usersRef, groupId };
 

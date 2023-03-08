@@ -14,11 +14,13 @@ export default function LeftPanel({ onSelectUser }) {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   
+  //each time user selected, you check
   const handleUserClick = useCallback((user) => {
     setSelectedUser(user);
     onSelectUser(user);
   }, [onSelectUser]);
 
+  //check for users
   const fetchAllOtherUsers = useCallback(() => {
     getOtherUsers()
       .then(data => setUsers(data))
@@ -27,12 +29,16 @@ export default function LeftPanel({ onSelectUser }) {
 
   useEffect(() => {
     // actively check for new users in the database
-    const usersQuery = query(usersRef);
-    const unsubscribe = onSnapshot(usersQuery, () => {
-      fetchAllOtherUsers();
-    });
+    // const usersQuery = query(usersRef);
+    // const unsubscribe = onSnapshot(usersQuery, () => {
+    //   fetchAllOtherUsers();
+    // });
 
-    return () => unsubscribe();
+    // return () => unsubscribe();
+    
+    setTimeout(() => {
+        fetchAllOtherUsers();
+    }, 2000);
   }, []);
   
   return (

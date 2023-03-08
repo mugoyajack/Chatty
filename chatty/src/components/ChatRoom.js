@@ -9,8 +9,10 @@ import {
 	where,
 } from "firebase/firestore";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { messagesRef, groupMessagesRef, groupId } from "../lib/config";
+import { messagesRef, groupId } from "../lib/config";
 import ChatMessage from "./ChatMessage";
+import { foundProfanity } from "./profanityFilter";
+import ProfanityFilter from "./profanityFilter";
 
 function msgSort(msgA, msgB) {
 	return msgA.createdAt.seconds - msgB.createdAt.seconds;
@@ -23,9 +25,9 @@ function msgSort(msgA, msgB) {
  */
 async function getMessages(sender, receiver) {
 	const messages = [];
-	
+
 	if (receiver.uid !== groupId) {
-        //Fetch chat messages
+		//Fetch chat messages
 
 		const senderMsgQuery = query(
 			messagesRef,
@@ -52,14 +54,14 @@ async function getMessages(sender, receiver) {
 		const msgQuery = query(messagesRef, orderBy("createdAt"), limit(1000));
 		const [groupSnapshot] = await Promise.all([getDocs(msgQuery)]);
 		if (groupSnapshot.empty) return [];
-        groupSnapshot.docs.forEach((doc) => messages.push(doc.data()));
+		groupSnapshot.docs.forEach((doc) => messages.push(doc.data()));
 	}
 	return messages.sort(msgSort);
 }
 
-
 export default function ChatRoom({ user, selectedUser }) {
 	const [formValue, setFormValue] = useState("");
+    //const [profanity, ProfanityFilter] = useState(false);
 	const [messages, setMessages] = useState();
 	const mainRef = useRef();
 	const { uid, photoURL } = user;
@@ -74,17 +76,20 @@ export default function ChatRoom({ user, selectedUser }) {
 
 	useEffect(() => {
 		// check for our received messages
-		const receiverMsgQuery = query(
-			messagesRef,
-			where("uid", "==", selectedUser.uid),
-			where("selectedUid", "==", user.uid),
-			limit(1000)
-		);
-		const unsubscribe = onSnapshot(receiverMsgQuery, () => {
-			getAllMessages();
-		});
+		// const receiverMsgQuery = query(
+		// 	messagesRef,
+		// 	where("uid", "==", selectedUser.uid),
+		// 	where("selectedUid", "==", user.uid),
+		// 	limit(1000)
+		// );
+		// const unsubscribe = onSnapshot(receiverMsgQuery, () => {
+		// 	getAllMessages();
+		// });
 
-		return () => unsubscribe();
+		// return () => unsubscribe();
+		setTimeout(() => {
+			getAllMessages();
+		}, 2000);
 	});
 
 	useEffect(() => {
@@ -93,6 +98,10 @@ export default function ChatRoom({ user, selectedUser }) {
 		}
 	}, [messages]);
 
+	/**
+	 * sendMessage send the message to the database
+	 * @param {*} e
+	 */
 	const sendMessage = async (e) => {
 		e.preventDefault();
 
@@ -104,8 +113,16 @@ export default function ChatRoom({ user, selectedUser }) {
 			selectedUid: selectedUser.uid,
 		});
 		setFormValue("");
-		getAllMessages();
 	};
+
+	// const handleSubmit = (e) => {
+	// 	e.preventDefault();
+	// 	const hasBadWords = ProfanityFilter(formValue);
+	// 	if (hasBadWords) {
+	// 		alert("Text cannot be sent!! It contains a bad word");
+	// 	}
+	// 	setFormValue("");
+	// };
 
 	return (
 		<>
@@ -117,13 +134,18 @@ export default function ChatRoom({ user, selectedUser }) {
 			</main>
 
 			<form onSubmit={sendMessage} className="send-message-form">
+				<ProfanityFilter input={formValue}>
+					<p>Profanity!</p>
+                    
+				</ProfanityFilter>
+
 				<input
 					value={formValue}
 					onChange={(e) => setFormValue(e.target.value)}
 					placeholder="Type a message..."
 				/>
 
-				<button type="submit" disabled={!formValue}>
+				<button type="submit" disabled={foundProfanity }>
 					Send
 				</button>
 			</form>

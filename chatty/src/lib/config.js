@@ -5,14 +5,14 @@ import { collection, getFirestore } from "firebase/firestore";
 // TODO: Replace the following with your app's Firebase project configuration
 // See: https://support.google.com/firebase/answer/7015592
 const firebaseConfig = {
-    apiKey: "AIzaSyCu3P1xnHFJnWn5Sh22MEARDtlq2cs7BGk",
-    authDomain: "chatty-1d579.firebaseapp.com",
-    databaseURL: "https://chatty-1d579-default-rtdb.firebaseio.com",
-    projectId: "chatty-1d579",
-    storageBucket: "chatty-1d579.appspot.com",
-    messagingSenderId: "959746801913",
-    appId: "1:959746801913:web:ff66714dd2d5ee8cabe228",
-    measurementId: "G-0G5MBHQ978",
+  apiKey: "AIzaSyA8QM05Ki9qEelGpQUStkRcboZ2r9vAPN0",
+  authDomain: "chatit-aadf2.firebaseapp.com",
+  databaseURL: "https://chatit-aadf2-default-rtdb.firebaseio.com",
+  projectId: "chatit-aadf2",
+  storageBucket: "chatit-aadf2.appspot.com",
+  messagingSenderId: "1014074031139",
+  appId: "1:1014074031139:web:6a982b59d444528b8d0596",
+  measurementId: "G-MF74DY7QC3"
 };
 
 // Initialize Firebase
@@ -23,8 +23,9 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 const messagesRef = collection(db, "messages");
+const groupMessagesRef = collection(db, "messages");
 const usersRef = collection(db, "users");
-const groupId = "P5P34bFraiT4i3qorOheAUSp31j1";
+const groupId = "2rRnQ5d8dxRQN5rGaQ2oWDMVXDE3";
 
-export { db, auth, messagesRef, usersRef, groupId };
+export { db, auth, messagesRef, groupMessagesRef, usersRef, groupId };
 

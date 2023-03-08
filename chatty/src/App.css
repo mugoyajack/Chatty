@@ -88,7 +88,7 @@ body {
     height: var(--send-message-input-height);
     position: fixed;
     bottom: 0;
-    background-color: rgb(10, 222, 31);
+    background-color: red;
     width: 70%;
     display: flex;
     font-size: 1.5rem;
